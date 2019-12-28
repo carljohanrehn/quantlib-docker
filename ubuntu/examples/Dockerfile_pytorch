@@ -1,0 +1,38 @@
+ARG TAG=latest
+
+FROM carljohanrehn/quantlib-miniconda3:${TAG}
+
+ENV PYTHONDONTWRITEBYTECODE=true
+
+ARG PYTHON_VERSION=3.7
+
+RUN conda install --yes --freeze-installed \
+    python=${PYTHON_VERSION} \
+    nose \
+    numpy \
+    scipy \
+    pandas \
+    matplotlib \
+    ipython \
+    jupyter \
+    pytorch torchvision cpuonly -c pytorch \
+    && conda clean -afy \
+    && find /opt/conda/ -follow -type f -name '*.a' -delete \
+    && find /opt/conda/ -follow -type f -name '*.pyc' -delete \
+    && find /opt/conda/ -follow -type f -name '*.js.map' -delete
+
+RUN pip install opencv-python \
+    gym \
+    atari-py \
+    pytorch-ignite 
+    
+CMD [ "/bin/bash" ]
+
+ARG QUANTLIB_SWIG_VERSION=1.17
+
+LABEL org.opencontainers.image.title="QuantLib" \
+    org.opencontainers.image.description="PyTorch and QuantLib on Ubuntu Linux in Docker" \ 
+    org.opencontainers.image.url="https://github.com/carljohanrehn/docker-quantlib" \ 
+    org.opencontainers.image.source="https://github.com/carljohanrehn/docker-quantlib" \
+    org.opencontainers.image.version="${QUANTLIB_VERSION}"
+
