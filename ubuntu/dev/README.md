@@ -1,4 +1,4 @@
-= Docker files for QuantLib development
+* Docker files for QuantLib development
 
 Download and extract QuantLib releases from https://bintray.com/quantlib/releases.
 
