@@ -1,0 +1,25 @@
+ARG TAG=latest
+
+FROM carljohanrehn/boost:${TAG}
+
+ARG QUANTLIB_VERSION=1.17
+ARG QUANTLIB_CHECKSUM=77443c3f9e9da3130ce0b2bce739928c14089f70d1e8abcf7dfad0adb40a84fb
+
+ENV QUANTLIB_VERSION ${QUANTLIB_VERSION}
+
+RUN wget https://dl.bintray.com/quantlib/releases/QuantLib-${QUANTLIB_VERSION}.tar.gz \
+#     && echo "${QUANTLIB_CHECKSUM} QuantLib-${QUANTLIB_VERSION}.tar.gz" | sha256sum -c \
+    && tar xfz QuantLib-${QUANTLIB_VERSION}.tar.gz \
+    && rm QuantLib-${QUANTLIB_VERSION}.tar.gz \
+    && cd QuantLib-${QUANTLIB_VERSION} \
+    && ./configure --prefix=/usr --disable-static CXXFLAGS=-O3 \
+    && make -j 4 && make check && make install \
+    && cd .. && rm -rf QuantLib-${QUANTLIB_VERSION} && ldconfig
+
+CMD [ "/bin/bash" ]
+
+LABEL org.opencontainers.image.title="QuantLib" \
+    org.opencontainers.image.description="QuantLib on Ubuntu Linux in Docker" \ 
+    org.opencontainers.image.url="https://github.com/carljohanrehn/quantlib-docker" \ 
+    org.opencontainers.image.source="https://github.com/carljohanrehn/quantlib-docker" \
+    org.opencontainers.image.version="${QUANTLIB_VERSION}"

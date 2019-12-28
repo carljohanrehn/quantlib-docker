@@ -1,0 +1,31 @@
+ARG TAG=latest
+
+FROM carljohanrehn/miniconda3:${TAG}
+
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential wget libbz2-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+ARG BOOST_VERSION=1.72.0
+ARG BOOST_CHECKSUM=c66e88d5786f2ca4dbebb14e06b566fb642a1a6947ad8cc9091f9f445134143f
+ARG BOOST_DIR=boost_1_72_0
+
+ENV BOOST_VERSION ${BOOST_VERSION}
+
+RUN wget https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source/${BOOST_DIR}.tar.gz \
+#     && echo "${BOOST_CHECKSUM} ${BOOST_DIR}.tar.gz" | sha256sum -c \
+    && tar xfz ${BOOST_DIR}.tar.gz \
+    && rm ${BOOST_DIR}.tar.gz \
+    && cd ${BOOST_DIR} \
+    && ./bootstrap.sh \
+    && ./b2 --without-python --prefix=/usr -j 4 link=shared runtime-link=shared install \
+    && cd .. && rm -rf ${boost_dir} && ldconfig
+
+CMD bash
+
+LABEL org.opencontainers.image.title="Boost" \
+    org.opencontainers.image.description="Boost C++ libraries on Ubuntu Linux in Docker" \ 
+    org.opencontainers.image.url="https://github.com/carljohanrehn/quantlib-docker" \ 
+    org.opencontainers.image.source="https://github.com/carljohanrehn/quantlib-docker" \
+    org.opencontainers.image.version="${BOOST_VERSION}"

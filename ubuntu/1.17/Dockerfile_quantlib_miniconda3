@@ -1,0 +1,39 @@
+ARG TAG=latest
+
+FROM carljohanrehn/quantlib:${TAG} AS builder
+
+ARG QUANTLIB_SWIG_VERSION=1.17
+ARG QUANTLIB_SWIG_CHECKSUM=d365dfef6a4d97cd7712da4d1fe575cf2da368c5230c7381517d8fad05e6014b
+
+ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
+
+RUN wget https://dl.bintray.com/quantlib/releases/QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}.tar.gz \
+#     && echo "${QUANTLIB_SWIG_CHECKSUM} QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}.tar.gz" | sha256sum -c \
+    && tar xfz QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}.tar.gz \
+    && rm QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}.tar.gz \
+    && cd QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}/Python \
+    && CXXFLAGS='-g0 -O3' python setup.py bdist_wheel
+
+
+FROM carljohanrehn/miniconda3:${TAG}
+
+COPY --from=builder /usr/lib/libQuantLib.la /usr/lib/
+COPY --from=builder /usr/lib/libQuantLib.so.0.0.0 /usr/lib/
+
+RUN cd /usr/lib && ln -s libQuantLib.so.0.0.0 libQuantLib.so.0
+RUN cd /usr/lib && ln -s libQuantLib.so.0.0.0 libQuantLib.so
+RUN ldconfig
+
+ARG QUANTLIB_SWIG_VERSION=1.17
+
+COPY --from=builder /QuantLib-SWIG-${QUANTLIB_SWIG_VERSION}/Python/dist/QuantLib*.whl /tmp/
+
+RUN pip install /tmp/QuantLib*.whl
+
+CMD [ "/bin/bash" ]
+
+LABEL org.opencontainers.image.title="QuantLib Miniconda 3" \
+    org.opencontainers.image.description="QuantLib Miniconda 3 on Ubuntu Linux in Docker" \ 
+    org.opencontainers.image.url="https://github.com/carljohanrehn/quantlib-docker" \ 
+    org.opencontainers.image.source="https://github.com/carljohanrehn/quantlib-docker" \
+    org.opencontainers.image.version="${QUANTLIB_SWIG_VERSION}"
