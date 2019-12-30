@@ -1,7 +1,7 @@
-# Docker files for create new images based on QuantLib image
+# Docker files for creating new images
 
 Here you will find my collection of Docker files which use the Docker 
-QuantLib Miniconda 3 image as base image.
+QuantLib Miniconda 3 image as a base image.
 
 Build images using build.sh (see comment on how to set your own tag). 
 
