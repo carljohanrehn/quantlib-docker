@@ -1,6 +1,6 @@
 ARG TAG=latest
 
-FROM carljohanrehn/quantlib:${TAG} AS builder
+FROM carljohanrehn/quantlib-dev:${TAG} AS builder
 
 ARG QUANTLIB_SWIG_VERSION=1.17
 ENV QUANTLIB_SWIG_VERSION ${QUANTLIB_SWIG_VERSION}
