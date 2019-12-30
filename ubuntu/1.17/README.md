@@ -1,4 +1,4 @@
-= Docker files for QuantLib releases
+# Docker files for QuantLib releases
 
 Build images using build.sh (see comment on how to set your own tag). 
 
