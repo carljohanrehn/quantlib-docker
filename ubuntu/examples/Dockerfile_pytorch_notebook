@@ -1,13 +1,13 @@
 ARG TAG=latest
 
-FROM carljohanrehn/pytorch-quantlib-miniconda3-dev:${TAG}
+FROM carljohanrehn/pytorch-quantlib-miniconda3:${TAG}
 
 EXPOSE 8888
 
 RUN mkdir /home/notebooks
 VOLUME /home/notebooks
 
-COPY notebooks/*.ipynb /notebooks/
+COPY notebooks/*.ipynb /home/notebooks/
 
 CMD jupyter notebook --no-browser --allow-root --ip=0.0.0.0 --port=8888 --notebook-dir=/home/notebooks
 
