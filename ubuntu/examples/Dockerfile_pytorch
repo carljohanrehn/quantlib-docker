@@ -1,6 +1,6 @@
 ARG TAG=latest
 
-FROM carljohanrehn/quantlib-miniconda3:${TAG}
+FROM carljohanrehn/quantlib-miniconda3-dev:${TAG}
 
 ENV PYTHONDONTWRITEBYTECODE=true
 
